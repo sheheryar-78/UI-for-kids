@@ -5,558 +5,351 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Spin the Wheel Challenge</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@600;700;900&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-body {
-font-family: 'Nunito', sans-serif;
-min-height: 100vh;
-background: linear-gradient(135deg, #0a0a1a 0%, #1a0533 40%, #0d1b2a 100%);
-overflow-x: hidden;
-color: #fff;
+body{
+font-family:'Inter',sans-serif;
+min-height:100vh;
+background:#080810;
+overflow-x:hidden;
+color:#fff;
+display:flex;flex-direction:column;align-items:center
 }
 
-body::before {
-content: '';
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
+body::before{
+content:'';
+position:fixed;inset:0;
 background:
-radial-gradient(ellipse at 15% 50%, rgba(0, 212, 255, 0.08) 0%, transparent 50%),
-radial-gradient(ellipse at 85% 20%, rgba(255, 45, 120, 0.06) 0%, transparent 50%),
-radial-gradient(ellipse at 50% 80%, rgba(0, 255, 136, 0.04) 0%, transparent 50%);
-pointer-events: none;
-z-index: 0;
+radial-gradient(ellipse 40% 50% at 15% 50%,rgba(0,243,255,0.06),transparent),
+radial-gradient(ellipse 40% 50% at 85% 20%,rgba(255,0,229,0.05),transparent),
+radial-gradient(ellipse 40% 50% at 50% 80%,rgba(139,92,246,0.04),transparent);
+pointer-events:none;z-index:0
 }
 
-.header {
-text-align: center;
-padding: 14px 10px 4px;
-position: relative;
-z-index: 1;
+/* ===== HEADER ===== */
+.header{
+text-align:center;padding:16px 16px 6px;position:relative;z-index:1;width:100%;max-width:1100px
 }
-.header h1 {
-font-family: 'Orbitron', sans-serif;
-font-size: clamp(1.2rem, 3.5vw, 2rem);
-font-weight: 900;
-background: linear-gradient(90deg, #00d4ff, #ff2d78, #ffd700, #00ff88, #00d4ff);
-background-size: 300% 100%;
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-animation: shiftGrad 4s ease infinite;
-filter: drop-shadow(0 0 25px rgba(0, 212, 255, 0.25));
+.header h1{
+font-family:'Orbitron',sans-serif;
+font-size:clamp(1.2rem,3.5vw,2rem);font-weight:900;
+background:linear-gradient(135deg,#00f3ff,#ff00e5,#ffd700,#00ff87);
+background-size:300% 300%;
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+animation:gradS 5s ease infinite;
+filter:drop-shadow(0 0 30px rgba(0,243,255,0.15))
 }
-@keyframes shiftGrad {
-0%, 100% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
-}
-.header p {
-font-size: clamp(0.7rem, 1.6vw, 0.85rem);
-color: rgba(255,255,255,0.35);
-letter-spacing: 3px;
-text-transform: uppercase;
-margin-top: 1px;
+@keyframes gradS{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.header p{
+font-size:clamp(0.65rem,1.4vw,0.8rem);color:rgba(255,255,255,0.25);
+letter-spacing:4px;text-transform:uppercase;margin-top:2px
 }
 
-.main-grid {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 10px;
-padding: 6px 10px 70px;
-position: relative;
-z-index: 1;
-max-width: 1100px;
-margin: 0 auto;
+/* ===== LAYOUT ===== */
+.main{
+display:flex;flex-direction:column;align-items:center;gap:10px;
+padding:6px 12px 60px;position:relative;z-index:1;width:100%;max-width:1100px
 }
-@media (min-width: 820px) {
-.main-grid { flex-direction: row; align-items: flex-start; gap: 16px; padding: 10px 16px 70px; }
+@media(min-width:860px){.main{flex-direction:row;align-items:flex-start;gap:20px;padding:10px 20px 60px}}
+
+.wheel-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
+
+.wheel-box{position:relative;width:min(78vw,340px);height:min(78vw,340px)}
+@media(min-width:860px){.wheel-box{width:370px;height:370px}}
+@media(min-width:1100px){.wheel-box{width:410px;height:410px}}
+
+#wheelCanvas{width:100%;height:100%;border-radius:50%}
+
+.pointer{
+position:absolute;top:-10px;left:50%;transform:translateX(-50%);z-index:10;
+width:0;height:0;
+border-left:13px solid transparent;border-right:13px solid transparent;
+border-top:24px solid #ffd700;
+filter:drop-shadow(0 0 15px rgba(255,215,0,0.8)) drop-shadow(0 0 30px rgba(255,215,0,0.3))
+}
+.pointer::after{
+content:'';position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+width:10px;height:10px;background:#ffd700;border-radius:50%;
+box-shadow:0 0 20px rgba(255,215,0,0.9),0 0 40px rgba(255,215,0,0.3)
 }
 
-.wheel-col { display: flex; flex-direction: column; align-items: center; gap: 8px; flex-shrink: 0; }
+/* ===== SPIN BUTTON ===== */
+.spin-btn{
+font-family:'Orbitron',sans-serif;font-weight:700;
+font-size:clamp(0.85rem,2vw,1rem);padding:11px 40px;
+border:none;border-radius:50px;
+background:linear-gradient(135deg,#00f3ff,#8b5cf6);color:#fff;
+cursor:pointer;transition:all .3s;
+text-transform:uppercase;letter-spacing:2px;
+box-shadow:0 0 25px rgba(0,243,255,0.3),0 0 50px rgba(139,92,246,0.12),inset 0 0 20px rgba(255,255,255,0.05);
+position:relative;overflow:hidden;
+}
+.spin-btn::before{
+content:'';position:absolute;inset:-2px;
+background:linear-gradient(135deg,#00f3ff,#ff00e5,#ffd700,#00ff87);
+background-size:300% 300%;border-radius:52px;z-index:-1;
+animation:borderPulse 3s ease infinite;opacity:0;transition:opacity .4s
+}
+.spin-btn:hover::before{opacity:1}
+.spin-btn:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 0 40px rgba(0,243,255,0.5),0 0 80px rgba(139,92,246,0.2)}
+.spin-btn:active{transform:translateY(0) scale(.97)}
+.spin-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
+@keyframes borderPulse{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
 
-.wheel-wrap {
-position: relative;
-width: min(80vw, 340px);
-height: min(80vw, 340px);
+.seg-display{
+text-align:center;padding:8px 16px;min-height:40px;
+display:flex;align-items:center;justify-content:center;gap:8px;
+background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);border-radius:10px;
+width:100%;max-width:340px
 }
-@media (min-width: 820px) { .wheel-wrap { width: 360px; height: 360px; } }
-@media (min-width: 1100px) { .wheel-wrap { width: 400px; height: 400px; } }
+.seg-name{font-weight:700;font-size:clamp(0.9rem,2.2vw,1.1rem);
+background:linear-gradient(90deg,#ffd700,#ff00e5);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
-#wheelCanvas {
-width: 100%;
-height: 100%;
-border-radius: 50%;
-box-shadow: 0 0 30px rgba(0, 212, 255, 0.15), 0 0 60px rgba(255, 45, 120, 0.08);
-}
+/* ===== SIDE ===== */
+.side{flex:1;width:100%;max-width:500px;display:flex;flex-direction:column;gap:8px}
 
-.pointer {
-position: absolute;
-top: -12px; left: 50%;
-transform: translateX(-50%);
-z-index: 10;
-width: 0; height: 0;
-border-left: 14px solid transparent;
-border-right: 14px solid transparent;
-border-top: 26px solid #ffd700;
-filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.7));
+.glass{
+background:rgba(255,255,255,0.02);
+backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+border:1px solid rgba(255,255,255,0.06);
+border-radius:14px;padding:12px 16px
 }
-.pointer::after {
-content: '';
-position: absolute;
-top: -30px; left: 50%;
-transform: translateX(-50%);
-width: 10px; height: 10px;
-background: #ffd700;
-border-radius: 50%;
-box-shadow: 0 0 18px rgba(255, 215, 0, 0.8);
-}
-
-.spin-btn {
-font-family: 'Orbitron', sans-serif;
-font-weight: 700;
-font-size: clamp(0.85rem, 2.2vw, 1rem);
-padding: 10px 36px;
-border: none;
-border-radius: 50px;
-background: linear-gradient(135deg, #00d4ff, #7c3aed);
-color: #fff;
-cursor: pointer;
-transition: all 0.3s;
-text-transform: uppercase;
-letter-spacing: 2px;
-box-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(124, 58, 237, 0.15);
-position: relative;
-overflow: hidden;
-}
-.spin-btn::before {
-content: '';
-position: absolute;
-inset: -2px;
-background: linear-gradient(135deg, #00d4ff, #ff2d78, #ffd700, #00ff88);
-background-size: 300% 300%;
-border-radius: 52px;
-z-index: -1;
-animation: glowSpin 3s ease infinite;
-opacity: 0;
-transition: opacity 0.3s;
-}
-.spin-btn:hover::before { opacity: 1; }
-.spin-btn:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 0 35px rgba(0, 212, 255, 0.5); }
-.spin-btn:active { transform: translateY(0) scale(0.97); }
-.spin-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-@keyframes glowSpin {
-0%, 100% { background-position: 0% 50%; }
-50% { background-position: 100% 50%; }
+.glass-title{
+font-family:'Orbitron',sans-serif;
+font-size:clamp(0.55rem,1.3vw,0.65rem);font-weight:700;
+text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.25);margin-bottom:8px
 }
 
-.segment-display {
-text-align: center;
-padding: 8px 16px;
-min-height: 42px;
-display: flex;
-align-items: center;
-justify-content: center;
-background: rgba(255,255,255,0.04);
-border: 1px solid rgba(255,255,255,0.06);
-border-radius: 12px;
-width: 100%;
-max-width: 340px;
+/* ===== TIMER ===== */
+.timer-row{display:flex;align-items:center;gap:12px}
+.timer-num{
+font-family:'Orbitron',sans-serif;font-size:clamp(1.3rem,3vw,1.6rem);font-weight:700;
+min-width:42px;text-align:center;color:rgba(255,255,255,0.8)
 }
-.seg-icon { font-size: 1.5rem; margin-right: 8px; }
-.seg-name {
-font-weight: 700;
-font-size: clamp(0.95rem, 2.4vw, 1.15rem);
-background: linear-gradient(90deg, #ffd700, #ff2d78);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
+.track{flex:1;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden}
+.track-fill{height:100%;width:100%;background:linear-gradient(90deg,#00ff87,#ffd700);border-radius:3px;transition:width .3s linear}
+.track-fill.amber{background:linear-gradient(90deg,#ff8800,#ffd700)}
+.track-fill.red{background:linear-gradient(90deg,#ff0055,#ff00e5)!important}
+.timer-num.warn{color:#ff0055!important;animation:pulseT .4s ease infinite}
+@keyframes pulseT{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ===== TEAMS ===== */
+.team-list{display:flex;flex-direction:column;gap:5px}
+.team-row{
+display:flex;align-items:center;gap:8px;
+padding:6px 10px;border-radius:10px;
+background:rgba(255,255,255,0.01);
+border:1px solid transparent;transition:all .3s;
+}
+.team-row.active{
+background:rgba(0,243,255,0.06);border-color:rgba(0,243,255,0.15);
+box-shadow:0 0 20px rgba(0,243,255,0.06)
+}
+.team-row.leader{border-color:rgba(255,215,0,0.12)}
+.team-row.leader .team-emoji{filter:drop-shadow(0 0 6px rgba(255,215,0,0.4))}
+.team-emoji{font-size:1.2rem;min-width:28px;text-align:center;cursor:pointer;user-select:none}
+.team-inp{
+background:transparent;border:none;border-bottom:1px solid rgba(255,255,255,0.08);
+color:#fff;font-family:inherit;font-size:clamp(0.8rem,1.8vw,0.9rem);
+font-weight:600;padding:2px 4px;outline:none;min-width:55px;flex:1;max-width:110px;
+transition:border-color .3s
+}
+.team-inp:focus{border-bottom-color:#00f3ff}
+.team-inp::placeholder{color:rgba(255,255,255,0.15)}
+
+.score-area{display:flex;align-items:center;gap:4px;margin-left:auto}
+.score-num{
+font-family:'Orbitron',sans-serif;font-weight:700;
+font-size:clamp(0.9rem,2vw,1.05rem);color:#ffd700;
+width:40px;text-align:center;background:transparent;border:none;outline:none;
+padding:2px;border-bottom:1px solid transparent;
+-moz-appearance:textfield
+}
+.score-num::-webkit-inner-spin-button,.score-num::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.score-num:focus{border-bottom-color:rgba(255,215,0,0.25)}
+.sc-btn{
+width:24px;height:24px;border-radius:6px;border:none;
+background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.4);
+font-size:.7rem;font-weight:700;cursor:pointer;
+display:flex;align-items:center;justify-content:center;transition:all .2s;line-height:1
+}
+.sc-btn:hover{background:rgba(255,255,255,0.1);color:#fff}
+.sc-btn.p:hover{background:rgba(0,255,135,0.12);color:#00ff87}
+.sc-btn.m:hover{background:rgba(255,0,85,0.12);color:#ff0055}
+.sc-btn.b{width:28px}
+
+.turn-badge{
+font-size:clamp(0.75rem,1.5vw,0.85rem);padding:5px 16px;border-radius:16px;
+background:rgba(0,243,255,0.06);border:1px solid rgba(0,243,255,0.1);
+display:inline-flex;align-items:center;gap:6px;margin-top:5px
 }
 
-/* Side panel */
-.side-col { flex: 1; width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 8px; }
+/* ===== MODAL ===== */
+.modal{
+position:fixed;inset:0;
+background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+z-index:1000;display:none;align-items:center;justify-content:center;padding:16px
+}
+.modal.open{display:flex}
 
-.glass {
-background: rgba(255, 255, 255, 0.03);
-backdrop-filter: blur(14px);
--webkit-backdrop-filter: blur(14px);
-border: 1px solid rgba(255, 255, 255, 0.07);
-border-radius: 14px;
-padding: 12px 14px;
+.card{
+background:linear-gradient(145deg,#0c0c1e,#11082a);
+border:1px solid rgba(0,243,255,0.08);border-radius:20px;
+padding:26px 22px;max-width:520px;width:100%;
+position:relative;overflow:hidden;
+box-shadow:0 30px 80px rgba(0,0,0,0.6),0 0 40px rgba(0,243,255,0.03);
+animation:cardUp .35s ease
 }
-.glass-title {
-font-family: 'Orbitron', sans-serif;
-font-size: clamp(0.6rem, 1.5vw, 0.7rem);
-font-weight: 700;
-text-transform: uppercase;
-letter-spacing: 2px;
-color: rgba(255,255,255,0.35);
-margin-bottom: 6px;
+@keyframes cardUp{from{transform:translateY(30px) scale(.97);opacity:0}to{transform:translateY(0) scale(1);opacity:1}}
+.card::before{
+content:'';position:absolute;inset:-50%;
+background:conic-gradient(from 0deg,transparent,rgba(0,243,255,0.03),transparent,rgba(139,92,246,0.03),transparent);
+animation:bgSpin 10s linear infinite;pointer-events:none
 }
+@keyframes bgSpin{to{transform:rotate(360deg)}}
+.card>*{position:relative;z-index:1}
 
-/* Timer */
-.timer-row { display: flex; align-items: center; gap: 10px; }
-.timer-num {
-font-family: 'Orbitron', sans-serif;
-font-size: 1.6rem;
-font-weight: 700;
-min-width: 44px;
-text-align: center;
-}
-.track { flex: 1; height: 7px; background: rgba(255,255,255,0.07); border-radius: 4px; overflow: hidden; }
-.track-fill {
-height: 100%;
-width: 100%;
-background: linear-gradient(90deg, #00ff88, #ffd700);
-border-radius: 4px;
-transition: width 0.3s linear;
-}
-.track-warn { color: #ff2d78 !important; animation: pulse 0.5s ease infinite; }
-.track-fill-danger { background: linear-gradient(90deg, #ff2d78, #ff6b6b) !important; }
-.track-fill-warn { background: linear-gradient(90deg, #ff8800, #ff2d78) !important; }
+.card-h{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.card-h .ci{font-size:1.8rem}
+.card-h .cs{font-family:'Orbitron',sans-serif;font-size:.55rem;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,0.2)}
+.card-h h2{font-size:clamp(1rem,2.6vw,1.25rem);font-weight:800}
 
-@keyframes pulse {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.4; }
-}
-
-/* Teams */
-.team-list { display: flex; flex-direction: column; gap: 4px; }
-.team-row {
-display: flex; align-items: center; gap: 6px;
-padding: 5px 8px;
-border-radius: 10px;
-background: rgba(255,255,255,0.02);
-border: 1px solid transparent;
-transition: all 0.3s;
-}
-.team-row.active {
-background: rgba(0, 212, 255, 0.08);
-border-color: rgba(0, 212, 255, 0.2);
-box-shadow: 0 0 12px rgba(0, 212, 255, 0.06);
-}
-.team-row.leader-row { border-color: rgba(255, 215, 0, 0.15); }
-
-.team-emoji { font-size: 1.2rem; min-width: 28px; text-align: center; cursor: pointer; }
-.team-emoji:hover { filter: brightness(1.3); }
-
-.team-name-input {
-background: transparent;
-border: none;
-border-bottom: 1px dashed rgba(255,255,255,0.12);
-color: #fff;
-font-family: inherit;
-font-size: clamp(0.8rem, 1.8vw, 0.9rem);
-font-weight: 600;
-padding: 2px 4px;
-outline: none;
-min-width: 60px;
-flex: 1;
-max-width: 120px;
-transition: border-color 0.3s;
-}
-.team-name-input:focus { border-bottom-color: #00d4ff; }
-.team-name-input::placeholder { color: rgba(255,255,255,0.2); }
-
-.score-group { display: flex; align-items: center; gap: 3px; margin-left: auto; }
-.team-score {
-font-family: 'Orbitron', sans-serif;
-font-weight: 700;
-font-size: clamp(0.9rem, 2vw, 1.05rem);
-color: #ffd700;
-min-width: 36px;
-text-align: center;
-background: transparent;
-border: none;
-color: #ffd700;
-font-family: 'Orbitron', sans-serif;
-font-weight: 700;
-font-size: clamp(0.9rem, 2vw, 1.05rem);
-width: 44px;
-text-align: center;
-outline: none;
-padding: 2px;
-border-bottom: 1px dashed transparent;
-transition: border-color 0.3s;
-}
-.team-score:focus { border-bottom-color: rgba(255, 215, 0, 0.3); }
-.team-score::-webkit-inner-spin-button, .team-score::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-
-.score-btn {
-width: 24px; height: 24px;
-border-radius: 6px;
-border: none;
-background: rgba(255,255,255,0.06);
-color: rgba(255,255,255,0.6);
-font-size: 0.75rem;
-font-weight: 700;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-transition: all 0.2s;
-line-height: 1;
-}
-.score-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
-.score-btn.plus:hover { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
-.score-btn.minus:hover { background: rgba(255, 45, 120, 0.2); color: #ff2d78; }
-.score-btn.big { width: 28px; }
-.score-btn.ok {
-width: auto; padding: 0 12px;
-background: rgba(0, 212, 255, 0.15);
-color: #00d4ff;
-font-size: 0.7rem;
-font-family: 'Orbitron', sans-serif;
-letter-spacing: 1px;
-}
-.score-btn.ok:hover { background: rgba(0, 212, 255, 0.25); }
-
-.turn-badge {
-text-align: center;
-font-size: clamp(0.75rem, 1.6vw, 0.85rem);
-padding: 5px 14px;
-border-radius: 16px;
-background: rgba(0, 212, 255, 0.08);
-border: 1px solid rgba(0, 212, 255, 0.12);
-display: inline-flex;
-align-items: center;
-gap: 6px;
-margin-top: 4px;
-}
-
-/* Conffeti */
-#confettiCanvas {
-position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-pointer-events: none; z-index: 9999;
-}
-
-/* Modal */
-.modal-wrap {
-position: fixed;
-inset: 0;
-background: rgba(0,0,0,0.65);
-backdrop-filter: blur(6px);
--webkit-backdrop-filter: blur(6px);
-z-index: 1000;
-display: none;
-align-items: center;
-justify-content: center;
-padding: 16px;
-}
-.modal-wrap.open { display: flex; }
-
-.challenge-card {
-background: linear-gradient(145deg, #0d0d2b, #1a0a30);
-border: 1px solid rgba(255,255,255,0.1);
-border-radius: 20px;
-padding: 24px 20px;
-max-width: 500px;
-width: 100%;
-position: relative;
-overflow: hidden;
-box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-animation: rise 0.35s ease;
-}
-@keyframes rise { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-.challenge-card::before {
-content: '';
-position: absolute;
-inset: -50%;
-background: conic-gradient(from 0deg, transparent, rgba(0,212,255,0.04), transparent, rgba(255,45,120,0.04), transparent);
-animation: spinBg 8s linear infinite;
-pointer-events: none;
-}
-@keyframes spinBg { to { transform: rotate(360deg); } }
-
-.challenge-card > * { position: relative; z-index: 1; }
-
-.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.card-head .big-icon { font-size: 1.8rem; }
-.card-head .sub { font-family: 'Orbitron', sans-serif; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.3); }
-.card-head h2 { font-size: clamp(1rem, 2.6vw, 1.25rem); font-weight: 800; }
-
-.card-q {
-font-size: clamp(1rem, 2.5vw, 1.2rem);
-line-height: 1.5;
-margin: 10px 0 14px;
-color: rgba(255,255,255,0.85);
-}
+.card-q{font-size:clamp(1rem,2.4vw,1.18rem);line-height:1.5;margin:10px 0 14px;color:rgba(255,255,255,0.82)}
 
 /* Options */
-.opts { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
-.opt-btn {
-padding: 9px 14px;
-border-radius: 10px;
-border: 1px solid rgba(255,255,255,0.08);
-background: rgba(255,255,255,0.04);
-color: #fff;
-font-size: clamp(0.85rem, 2vw, 0.95rem);
-font-family: inherit;
-cursor: pointer;
-transition: all 0.25s;
-text-align: left;
+.opts{display:flex;flex-direction:column;gap:6px;margin:10px 0}
+.opt{
+padding:10px 14px;border-radius:10px;
+border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);
+color:#fff;font-size:clamp(.85rem,2vw,.95rem);font-family:inherit;
+cursor:pointer;transition:all .25s;text-align:left
 }
-.opt-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18); }
-.opt-btn.correct { background: rgba(0, 255, 136, 0.15); border-color: #00ff88; color: #00ff88; }
-.opt-btn.wrong { background: rgba(255, 45, 120, 0.15); border-color: #ff2d78; color: #ff2d78; }
-.opt-btn.reveal { background: rgba(0, 212, 255, 0.1); border-color: #00d4ff; }
-.opt-btn:disabled { cursor: not-allowed; }
+.opt:hover{background:rgba(255,255,255,0.07);border-color:rgba(255,255,255,0.12)}
+.opt.ok{background:rgba(0,255,135,0.12);border-color:#00ff87;color:#00ff87}
+.opt.no{background:rgba(255,0,85,0.12);border-color:#ff0055;color:#ff0055}
+.opt.show{background:rgba(0,243,255,0.08);border-color:#00f3ff}
+.opt:disabled{cursor:not-allowed}
 
-/* Answer reveal box */
-.answer-box {
-margin: 10px 0;
-padding: 12px 16px;
-border-radius: 10px;
-background: rgba(0, 212, 255, 0.06);
-border: 1px solid rgba(0, 212, 255, 0.12);
-display: none;
+/* Answer box */
+.ans-box{
+margin:10px 0;padding:12px 16px;border-radius:10px;
+background:rgba(0,243,255,0.04);border:1px solid rgba(0,243,255,0.08);
+display:none
 }
-.answer-box.show { display: block; }
-.answer-box .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
-.answer-box .val { color: #00d4ff; font-weight: 700; font-size: 1rem; }
+.ans-box.open{display:block}
+.ans-box .al{font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.25);margin-bottom:4px}
+.ans-box .av{color:#00f3ff;font-weight:700;font-size:1rem}
 
-/* Card actions */
-.card-acts { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-.card-acts button {
-padding: 8px 18px;
-border-radius: 10px;
-border: none;
-font-family: inherit;
-font-weight: 700;
-font-size: 0.85rem;
-cursor: pointer;
-transition: all 0.25s;
+/* Card acts */
+.c-acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.c-acts button{
+padding:8px 18px;border-radius:10px;border:none;
+font-family:inherit;font-weight:700;font-size:.85rem;
+cursor:pointer;transition:all .25s
 }
-.btn-cy { background: linear-gradient(135deg, #00d4ff, #7c3aed); color: #fff; box-shadow: 0 0 15px rgba(0,212,255,0.2); }
-.btn-cy:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(0,212,255,0.35); }
-.btn-gold { background: linear-gradient(135deg, #ffd700, #ff8800); color: #0a0a1a; box-shadow: 0 0 15px rgba(255,215,0,0.2); }
-.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 0 25px rgba(255,215,0,0.35); }
-.btn-ghost { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.08); }
-.btn-ghost:hover { background: rgba(255,255,255,0.12); color: #fff; }
-.btn-ans { background: rgba(0, 255, 136, 0.12); color: #00ff88; border: 1px solid rgba(0,255,136,0.15); }
-.btn-ans:hover { background: rgba(0, 255, 136, 0.2); }
+.btn-p{background:linear-gradient(135deg,#00f3ff,#8b5cf6);color:#fff;box-shadow:0 0 15px rgba(0,243,255,.15)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 0 25px rgba(0,243,255,.3)}
+.btn-g{background:linear-gradient(135deg,#ffd700,#ff8800);color:#080810;box-shadow:0 0 15px rgba(255,215,0,.15)}
+.btn-g:hover{transform:translateY(-1px);box-shadow:0 0 25px rgba(255,215,0,.3)}
+.btn-gh{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.06)}
+.btn-gh:hover{background:rgba(255,255,255,0.08);color:#fff}
+.btn-v{background:rgba(0,255,135,0.08);color:#00ff87;border:1px solid rgba(0,255,135,0.1)}
+.btn-v:hover{background:rgba(0,255,135,0.14)}
 
-.msg-box {
-text-align: center;
-padding: 8px 12px;
-border-radius: 10px;
-margin: 8px 0;
-font-size: 0.95rem;
-font-weight: 600;
-}
-.msg-box.good { background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.15); color: #00ff88; }
-.msg-box.bad { background: rgba(255, 45, 120, 0.1); border: 1px solid rgba(255, 45, 120, 0.15); color: #ff2d78; }
-.msg-box.info { background: rgba(0, 212, 255, 0.08); border: 1px solid rgba(0, 212, 255, 0.1); color: #00d4ff; }
+.msg{margin:8px 0;padding:8px 14px;border-radius:10px;font-size:.9rem;font-weight:600;text-align:center}
+.msg.ok{background:rgba(0,255,135,0.08);border:1px solid rgba(0,255,135,0.1);color:#00ff87}
+.msg.no{background:rgba(255,0,85,0.08);border:1px solid rgba(255,0,85,0.1);color:#ff0055}
+.msg.info{background:rgba(0,243,255,0.06);border:1px solid rgba(0,243,255,0.08);color:#00f3ff}
 
-/* Points popup */
-.pts-popup {
-position: fixed;
-top: 50%; left: 50%;
-transform: translate(-50%, -50%);
-font-family: 'Orbitron', sans-serif;
-font-size: clamp(2.5rem, 8vw, 5rem);
-font-weight: 900;
-color: #ffd700;
-text-shadow: 0 0 30px rgba(255,215,0,0.7), 0 0 60px rgba(255,215,0,0.3);
-z-index: 10000;
-pointer-events: none;
-animation: popPts 1.4s ease forwards;
+/* ===== EMOJI ===== */
+.emoji-big{font-size:clamp(2.5rem,7vw,4rem);text-align:center;margin:12px 0;letter-spacing:8px}
+.emoji-inp{
+width:100%;padding:10px 14px;border-radius:10px;
+border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);
+color:#fff;font-family:inherit;font-size:.95rem;outline:none;transition:border-color .3s
 }
-@keyframes popPts {
-0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-25% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-55% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-100% { opacity: 0; transform: translate(-50%, -70%) scale(1.1); }
-}
+.emoji-inp:focus{border-color:rgba(0,243,255,0.25)}
+.hint{font-size:.8rem;color:rgba(255,255,255,0.25);font-style:italic;margin-top:4px}
 
-/* Emoji guess */
-.emoji-big { font-size: clamp(2.2rem, 7vw, 3.5rem); text-align: center; margin: 12px 0; letter-spacing: 6px; }
-.emoji-inp {
-width: 100%;
-padding: 10px 14px;
-border-radius: 10px;
-border: 1px solid rgba(255,255,255,0.08);
-background: rgba(255,255,255,0.04);
-color: #fff;
-font-family: inherit;
-font-size: 0.95rem;
-outline: none;
-transition: border-color 0.3s;
-}
-.emoji-inp:focus { border-color: rgba(0, 212, 255, 0.3); }
-.hint { font-size: 0.8rem; color: rgba(255,255,255,0.3); font-style: italic; margin-top: 4px; }
+/* ===== RF ===== */
+.rf-q{padding:10px;margin:6px 0;border-radius:10px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04)}
+.rf-l{font-weight:600;margin-bottom:4px;font-size:.85rem}
+.rf-o{display:flex;gap:5px;flex-wrap:wrap}
+.rf-o button{padding:4px 12px;border-radius:7px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03);color:#fff;cursor:pointer;font-family:inherit;font-size:.78rem;transition:all .2s}
+.rf-o button:hover{background:rgba(255,255,255,0.07)}
+.rf-o button.ok{background:rgba(0,255,135,0.12);border-color:#00ff87}
+.rf-o button.no{background:rgba(255,0,85,0.12);border-color:#ff0055}
 
-/* Rapid Fire */
-.rf-q { padding: 10px; margin: 6px 0; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
-.rf-q-label { font-weight: 600; margin-bottom: 4px; font-size: 0.9rem; }
-.rf-opts { display: flex; gap: 5px; flex-wrap: wrap; }
-.rf-opts button {
-padding: 5px 12px;
-border-radius: 7px;
-border: 1px solid rgba(255,255,255,0.08);
-background: rgba(255,255,255,0.04);
-color: #fff;
-cursor: pointer;
-font-family: inherit;
-font-size: 0.8rem;
-transition: all 0.2s;
-}
-.rf-opts button:hover { background: rgba(255,255,255,0.1); }
-.rf-opts button.sel { background: rgba(0, 212, 255, 0.15); border-color: #00d4ff; }
-.rf-opts button.correct { background: rgba(0, 255, 136, 0.15); border-color: #00ff88; }
-.rf-opts button.wrong { background: rgba(255, 45, 120, 0.15); border-color: #ff2d78; }
+/* Bonus */
+.bonus{text-align:center;padding:24px 16px}
+.bonus .bi{font-size:4rem;margin-bottom:8px;display:block}
+.bonus .bt{font-size:1.15rem}
 
-/* Mystery / Lucky / Double */
-.bonus-box { text-align: center; padding: 24px 16px; }
-.bonus-icon { font-size: 4rem; margin-bottom: 8px; }
-.bonus-text { font-size: 1.15rem; color: rgba(255,255,255,0.8); }
-
-/* Responsive */
-@media (max-width: 819px) {
-.main-grid { gap: 8px; padding: 6px 8px 60px; }
-.glass { padding: 10px 10px; }
-.team-row { padding: 4px 6px; }
-.team-name-input { max-width: 80px; font-size: 0.8rem; }
-.team-emoji { font-size: 1rem; min-width: 22px; }
-.challenge-card { padding: 18px 14px; }
-.card-acts button { font-size: 0.78rem; padding: 7px 14px; }
-.score-btn { width: 22px; height: 22px; font-size: 0.65rem; }
-.team-score { width: 34px; font-size: 0.85rem; }
-.score-btn.big { width: 24px; }
-.score-btn.ok { padding: 0 8px; font-size: 0.65rem; }
+/* ===== POPUP ===== */
+.pts-pop{
+position:fixed;top:50%;left:50%;
+transform:translate(-50%,-50%);
+font-family:'Orbitron',sans-serif;
+font-size:clamp(3rem,9vw,5.5rem);font-weight:900;
+color:#ffd700;
+text-shadow:0 0 30px rgba(255,215,0,0.6),0 0 60px rgba(255,215,0,0.25),0 0 100px rgba(255,215,0,0.1);
+z-index:10000;pointer-events:none;
+animation:popGo 1.3s ease forwards
 }
-@media (max-width: 360px) {
-.wheel-wrap { width: 92vw; height: 92vw; }
-.team-name-input { max-width: 60px; font-size: 0.75rem; }
-.team-score { width: 28px; font-size: 0.75rem; }
+@keyframes popGo{
+0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+50%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+100%{opacity:0;transform:translate(-50%,-65%) scale(1.05)}
 }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+/* ===== CONFETTI ===== */
+#confettiCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999}
+
+/* ===== SCROLL ===== */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.05);border-radius:2px}
+
+@media(max-width:859px){
+.main{gap:8px;padding:6px 8px 50px}
+.glass{padding:10px 10px}
+.team-inp{max-width:70px;font-size:.78rem}
+.team-emoji{font-size:1rem;min-width:22px}
+.card{padding:18px 14px}
+.c-acts button{font-size:.78rem;padding:7px 12px}
+.sc-btn{width:22px;height:22px;font-size:.65rem}
+.score-num{width:34px;font-size:.85rem}
+.sc-btn.b{width:26px}
+}
+@media(max-width:360px){
+.wheel-box{width:90vw;height:90vw}
+.team-inp{max-width:55px;font-size:.72rem}
+.score-num{width:28px;font-size:.78rem}
+}
 </style>
 </head>
 <body>
 
 <header class="header">
 <h1>🎡 SPIN THE WHEEL</h1>
-<p>Challenge • Compete • Conquer</p>
+<p>Challenge &bull; Compete &bull; Conquer</p>
 </header>
 
-<div class="main-grid">
+<div class="main">
 <div class="wheel-col">
-<div class="wheel-wrap">
+<div class="wheel-box">
 <canvas id="wheelCanvas"></canvas>
 <div class="pointer"></div>
 </div>
 <button class="spin-btn" id="spinBtn">▶ SPIN</button>
-<div class="segment-display" id="segDisplay">
-<span style="color:rgba(255,255,255,0.3);font-size:0.8rem;">Hit SPIN to start!</span>
-</div>
+<div class="seg-display" id="segDisp"><span style="color:rgba(255,255,255,0.2);font-size:.8rem">Press SPIN to go!</span></div>
 </div>
 
-<div class="side-col">
+<div class="side">
 <div class="glass">
 <div class="glass-title">⏱ Timer</div>
 <div class="timer-row">
@@ -566,25 +359,25 @@ transition: all 0.2s;
 </div>
 
 <div class="glass">
-<div class="glass-title">👥 Teams &amp; Scores</div>
+<div class="glass-title">👥 Teams</div>
 <div class="team-list" id="teamList"></div>
-<div style="text-align:center;margin-top:6px;"><span class="turn-badge" id="turnBadge">🎯 <span id="curTeamName">Alpha</span>'s Turn</span></div>
+<div style="text-align:center;margin-top:6px"><span class="turn-badge">🎯 <span id="curTeam">Alpha</span>'s Turn</span></div>
 </div>
 </div>
 </div>
 
-<div class="modal-wrap" id="modalWrap">
-<div class="challenge-card" id="card">
-<div class="card-head">
-<span class="big-icon" id="cardIcon">🎯</span>
+<div class="modal" id="modal">
+<div class="card" id="card">
+<div class="card-h">
+<span class="ci" id="cardIcon">🎯</span>
 <div>
-<div class="sub" id="cardSub">CATEGORY</div>
+<div class="cs" id="cardSub">CATEGORY</div>
 <h2 id="cardTitle">Title</h2>
 </div>
 </div>
 <div id="cardBody"></div>
-<div id="cardResult"></div>
-<div class="card-acts" id="cardActs"></div>
+<div id="cardRes"></div>
+<div class="c-acts" id="cardActs"></div>
 </div>
 </div>
 
@@ -592,22 +385,22 @@ transition: all 0.2s;
 
 <script>
 // ===== CATEGORIES =====
-const CAT = [
-{ name:'Simple Question', icon:'💡', color:'#ff2d78' },
-{ name:'Hard Question', icon:'🧠', color:'#7c3aed' },
-{ name:'Riddle Challenge', icon:'🔮', color:'#00d4ff' },
-{ name:'Meme Challenge', icon:'😂', color:'#ff8800' },
-{ name:'Rapid Fire', icon:'🔥', color:'#ff6b6b' },
-{ name:'Double Points', icon:'✌️', color:'#ffd700' },
-{ name:'Team Challenge', icon:'🤝', color:'#00ff88' },
-{ name:'Lucky Bonus', icon:'🍀', color:'#38bdf8' },
-{ name:'Emoji Guess', icon:'🎬', color:'#a78bfa' },
-{ name:'Mystery Box', icon:'🎁', color:'#f472b6' }
+const CATS=[
+{name:'Simple Question',icon:'💡',color:'#ff0055'},
+{name:'Hard Question',icon:'🧠',color:'#8b5cf6'},
+{name:'Riddle Challenge',icon:'🔮',color:'#00f3ff'},
+{name:'Meme Challenge',icon:'😂',color:'#ff6a00'},
+{name:'Rapid Fire',icon:'🔥',color:'#ff3366'},
+{name:'Double Points',icon:'✌️',color:'#ffd700'},
+{name:'Team Challenge',icon:'🤝',color:'#00ff87'},
+{name:'Lucky Bonus',icon:'🍀',color:'#06b6d4'},
+{name:'Emoji Guess',icon:'🎬',color:'#7c3aed'},
+{name:'Mystery Box',icon:'🎁',color:'#f472b6'}
 ];
-const COLS = CAT.map(c=>c.color);
+const COLS=CATS.map(c=>c.color);
 
-// ===== QUESTIONS =====
-const simpleQ = [
+// ===== DATA =====
+const SQ=[
 {q:"What is the capital of Japan?",o:["Tokyo","Seoul","Beijing","Bangkok"],a:0},
 {q:"How many continents are there?",o:["5","6","7","8"],a:2},
 {q:"Largest ocean on Earth?",o:["Atlantic","Indian","Arctic","Pacific"],a:3},
@@ -634,7 +427,7 @@ const simpleQ = [
 {q:"What is the biggest bird in the world?",o:["Eagle","Ostrich","Albatross","Penguin"],a:1},
 {q:"Which planet is known as the Red Planet?",o:["Jupiter","Saturn","Mars","Venus"],a:2}
 ];
-const hardQ = [
+const HQ=[
 {q:"Which planet has the most moons?",o:["Jupiter","Saturn","Uranus","Neptune"],a:1},
 {q:"What does DNA stand for?",o:["Deoxyribonucleic Acid","Dynonucleic Acid","Dual Nuclear Acid","Deoxynitrogen Acid"],a:0},
 {q:"Speed of light in vacuum (km/s)?",o:["~200,000","~250,000","~300,000","~350,000"],a:2},
@@ -666,7 +459,7 @@ const hardQ = [
 {q:"Mathematician who developed Fibonacci sequence?",o:["Pythagoras","Euclid","Fibonacci","Archimedes"],a:2},
 {q:"Approx circumference of Earth in km?",o:["20,000","30,000","40,000","50,000"],a:2}
 ];
-const riddles = [
+const RIDDLES=[
 {q:"I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",a:"Echo"},
 {q:"The more you take, the more you leave behind. What am I?",a:"Footsteps"},
 {q:"I have cities but no houses, mountains but no trees, water but no fish. What am I?",a:"A Map"},
@@ -680,33 +473,33 @@ const riddles = [
 {q:"What has a neck but no head?",a:"A Bottle"},
 {q:"What runs all around a backyard yet never moves?",a:"A Fence"}
 ];
-const memes = [
+const MEMES=[
 {q:"What does GOAT mean online?",o:["Greatest Of All Time","Great On A Tuesday","Going On A Trip","Get Out And Try"],a:0},
 {q:"What does POV mean on social media?",o:["Picture Of View","Point Of View","Personal Online Video","Power Of Voice"],a:1},
 {q:"What does LOL stand for?",o:["Lots Of Love","Laugh Out Loud","Little Old Lady","Load Of Laughs"],a:1},
 {q:"What does FOMO mean?",o:["Fear Of Moving On","Fear Of Missing Out","Finding Online Moments","Feeling Of Mixed Opinions"],a:1},
-{q:"What does 'Savage' mean in slang?",o:["Wild animal","Something cool/brutally honest","Old-fashioned","Scared"],a:1},
+{q:"What does 'Savage' mean?",o:["Wild animal","Something cool/brutally honest","Old-fashioned","Scared"],a:1},
 {q:"What does 'No Cap' mean?",o:["No hat","No lie / For real","No problem","Not capable"],a:1},
-{q:"What does 'Bet' mean in texting?",o:["A wager","Okay / Agreed","Gambling","Maybe"],a:1},
+{q:"What does 'Bet' mean?",o:["A wager","Okay / Agreed","Gambling","Maybe"],a:1},
 {q:"What does 'Slay' mean?",o:["To kill","To do amazingly well","To sleep","To run"],a:1},
 {q:"What does 'Understood the assignment' mean?",o:["Did homework","Nailed it / Perfected it","Got the job","Read instructions"],a:1},
 {q:"What does 'Bussin' mean?",o:["Broken","Really good / Delicious","Busy","Busted"],a:1}
 ];
-const rfSets = [
-{q1:"What is 5 x 6?",o1:["25","30","35","40"],a1:1,q2:"Which planet is known as Morning Star?",o2:["Mars","Venus","Jupiter","Mercury"],a2:1,q3:"How many days in a leap year?",o3:["364","365","366","367"],a3:2},
-{q1:"Square root of 81?",o1:["7","8","9","10"],a1:2,q2:"Country with largest population?",o2:["India","China","USA","Indonesia"],a2:0,q3:"Color mixing blue and yellow?",o3:["Green","Purple","Orange","Red"],a3:0},
-{q1:"How many months have 31 days?",o1:["5","6","7","8"],a1:2,q2:"Animal that can change color?",o2:["Octopus","Lizard","Chameleon","Frog"],a2:2,q3:"Smallest prime number?",o3:["0","1","2","3"],a3:2},
-{q1:"How many sides does a triangle have?",o1:["2","3","4","5"],a1:1,q2:"Currency of Japan?",o2:["Yuan","Won","Yen","Ringgit"],a2:2,q3:"Gas we breathe out?",o3:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],a3:2},
-{q1:"What is 12 x 12?",o1:["124","134","144","154"],a1:2,q2:"Largest continent?",o2:["Africa","Asia","North America","Europe"],a2:1,q3:"How many legs does an ant have?",o3:["4","6","8","10"],a3:1}
+const RFS=[
+{q1:"5 x 6?",o1:["25","30","35","40"],a1:1,q2:"Morning Star planet?",o2:["Mars","Venus","Jupiter","Mercury"],a2:1,q3:"Days in a leap year?",o3:["364","365","366","367"],a3:2},
+{q1:"Square root of 81?",o1:["7","8","9","10"],a1:2,q2:"Largest population?",o2:["India","China","USA","Indonesia"],a2:0,q3:"Blue + yellow = ?",o3:["Green","Purple","Orange","Red"],a3:0},
+{q1:"Months with 31 days?",o1:["5","6","7","8"],a1:2,q2:"Color-changing animal?",o2:["Octopus","Lizard","Chameleon","Frog"],a2:2,q3:"Smallest prime?",o3:["0","1","2","3"],a3:2},
+{q1:"Sides of a triangle?",o1:["2","3","4","5"],a1:1,q2:"Japan currency?",o2:["Yuan","Won","Yen","Ringgit"],a2:2,q3:"Gas we breathe out?",o3:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],a3:2},
+{q1:"12 x 12?",o1:["124","134","144","154"],a1:2,q2:"Largest continent?",o2:["Africa","Asia","North America","Europe"],a2:1,q3:"Ant legs?",o3:["4","6","8","10"],a3:1}
 ];
-const teamQs = [
-{q:"List 5 countries starting with 'S'. Everyone contributes one!"},
+const TEAM_Q=[
+{q:"List 5 countries starting with 'S'. Everyone contributes!"},
 {q:"Each member names a different programming language. No repeats!"},
-{q:"Create a short team cheer with the word 'VICTORY'. Each member adds one word!"},
-{q:"Name 3 capital cities from 3 different continents as a team!"},
-{q:"List 5 elements from the periodic table as a team!"}
+{q:"Create a team cheer with the word 'VICTORY'. Each member adds a word!"},
+{q:"Name 3 capital cities from 3 different continents!"},
+{q:"List 5 elements from the periodic table!"}
 ];
-const emojis = [
+const EMOJIS=[
 {em:"🍕🐢",hint:"Heroes in a half shell",a:"Teenage Mutant Ninja Turtles"},
 {em:"🦁👑",hint:"Disney classic",a:"The Lion King"},
 {em:"🌊🧜♀️",hint:"Underwater princess",a:"The Little Mermaid"},
@@ -722,579 +515,475 @@ const emojis = [
 {em:"🐟🤡",hint:"Finding something",a:"Finding Nemo"},
 {em:"🐰🥕",hint:"Looney Tunes",a:"Bugs Bunny"}
 ];
-const mxBox = [
-{text:"+10 Points",pts:10},{text:"+20 Points",pts:20},{text:"Double Next Score",pts:0,sp:"double"},{text:"Extra Turn",pts:0,sp:"extra"},{text:"Team Bonus +15",pts:15}
+const MX=[
+{text:"+10 Points",pts:10},{text:"+20 Points",pts:20},{text:"Double Next Score",pts:0,sp:"dbl"},{text:"Extra Turn",pts:0,sp:"ext"},{text:"Team Bonus +15",pts:15}
 ];
-const luckyB = [
+const LUCK=[
 {text:"Lucky charm! +5 bonus!",pts:5},{text:"Lucky star! +8 bonus!",pts:8},{text:"Fortune smiles! +12 bonus!",pts:12},{text:"Amazing luck! +15 bonus!",pts:15},{text:"JACKPOT! +25 bonus!",pts:25}
 ];
 
 // ===== STATE =====
-const DEFAULT_TEAMS = [
-{emoji:'🦊',name:'Alpha',score:0},{emoji:'🐉',name:'Beta',score:0},{emoji:'🦅',name:'Gamma',score:0},{emoji:'🐬',name:'Delta',score:0}
+const DEF_TEAMS=[
+{emo:'🦊',name:'Alpha',score:0},{emo:'🐉',name:'Beta',score:0},
+{emo:'🦅',name:'Gamma',score:0},{emo:'🐬',name:'Delta',score:0}
 ];
-let teams = DEFAULT_TEAMS.map(t=>({...t}));
-let curTeam = 0;
-let spinning = false;
-let challengeActive = false;
-let doubleNext = false;
-let extraTurn = false;
-let wheelRot = 0;
+let teams=DEF_TEAMS.map(t=>({...t}));
+let cur=0,spin=false,act=false,dbl=false,ext=false,rot=0;
 
 // ===== DOM =====
-const cv = document.getElementById('wheelCanvas');
-const cx = cv.getContext('2d');
-const spinBtn = document.getElementById('spinBtn');
-const segDisp = document.getElementById('segDisplay');
-const timerNum = document.getElementById('timerNum');
-const timerFill = document.getElementById('timerFill');
-const teamList = document.getElementById('teamList');
-const curTeamName = document.getElementById('curTeamName');
-const modalWrap = document.getElementById('modalWrap');
-const card = document.getElementById('card');
-const cardIcon = document.getElementById('cardIcon');
-const cardSub = document.getElementById('cardSub');
-const cardTitle = document.getElementById('cardTitle');
-const cardBody = document.getElementById('cardBody');
-const cardResult = document.getElementById('cardResult');
-const cardActs = document.getElementById('cardActs');
-const confettiCv = document.getElementById('confettiCanvas');
-const cCtx = confettiCv.getContext('2d');
+const cv=document.getElementById('wheelCanvas'),cx=cv.getContext('2d');
+const sb=document.getElementById('spinBtn'),sd=document.getElementById('segDisp');
+const tn=document.getElementById('timerNum'),tf=document.getElementById('timerFill');
+const tl=document.getElementById('teamList'),ct=document.getElementById('curTeam');
+const mw=document.getElementById('modal'),cd=document.getElementById('card');
+const ci=document.getElementById('cardIcon'),cs=document.getElementById('cardSub');
+const ctit=document.getElementById('cardTitle'),cb=document.getElementById('cardBody');
+const cr=document.getElementById('cardRes'),ca=document.getElementById('cardActs');
+const ccv=document.getElementById('confettiCanvas'),cctx=ccv.getContext('2d');
 
-// ===== CANVAS SETUP =====
-let cSize = 0;
-function setupCanvas() {
-const rect = cv.parentElement.getBoundingClientRect();
-cSize = rect.width;
-const d = Math.min(window.devicePixelRatio||1,2);
-cv.width = cSize*d; cv.height = cSize*d;
-cv.style.width = cSize+'px'; cv.style.height = cSize+'px';
-cx.scale(d,d);
-drawWheel(wheelRot);
+// ===== CANVAS =====
+let sz=0;
+function setupCv(){
+const r=cv.parentElement.getBoundingClientRect();sz=r.width;
+const d=Math.min(window.devicePixelRatio||1,2);
+cv.width=sz*d;cv.height=sz*d;cv.style.width=sz+'px';cv.style.height=sz+'px';
+cx.scale(d,d);drawWheel(rot)
 }
-function setupConfetti() {
-confettiCv.width = window.innerWidth;
-confettiCv.height = window.innerHeight;
-}
+function setupCc(){ccv.width=window.innerWidth;ccv.height=window.innerHeight}
 
-// ===== WHEEL =====
-function drawWheel(rot) {
-const s = cSize, r = s/2-5, sa = 2*Math.PI/CAT.length;
-cx.clearRect(0,0,s,s);
-cx.save(); cx.translate(s/2,s/2); cx.rotate(rot);
-for(let i=0;i<CAT.length;i++){
-const st = -Math.PI/2+i*sa, en = st+sa;
-const g = cx.createRadialGradient(0,0,0,0,0,r);
-g.addColorStop(0,lighten(COLS[i],45)); g.addColorStop(1,COLS[i]);
-cx.beginPath(); cx.moveTo(0,0); cx.arc(0,0,r,st,en); cx.closePath();
-cx.fillStyle = g; cx.fill();
-cx.strokeStyle = 'rgba(255,255,255,0.08)'; cx.lineWidth=1; cx.stroke();
-cx.save(); cx.rotate(st+sa/2); cx.textAlign='right';
+function drawWheel(r){
+const s=sz,rad=s/2-5,sa=2*Math.PI/CATS.length;
+cx.clearRect(0,0,s,s);cx.save();cx.translate(s/2,s/2);cx.rotate(r);
+for(let i=0;i<CATS.length;i++){
+const st=-Math.PI/2+i*sa,en=st+sa;
+const g=cx.createRadialGradient(0,0,0,0,0,rad);
+g.addColorStop(0,lt(COLS[i],40));g.addColorStop(1,COLS[i]);
+cx.beginPath();cx.moveTo(0,0);cx.arc(0,0,rad,st,en);cx.closePath();
+cx.fillStyle=g;cx.fill();
+cx.strokeStyle='rgba(255,255,255,0.06)';cx.lineWidth=1;cx.stroke();
+cx.save();cx.rotate(st+sa/2);cx.textAlign='right';
 cx.fillStyle='#fff';
-cx.font=`bold ${s*0.042}px 'Nunito',sans-serif`;
-const tr = r*0.7;
-const lines = wrapT(CAT[i].name,s*0.055);
-for(let j=0;j<lines.length;j++) cx.fillText(lines[j],tr,(j-(lines.length-1)/2)*s*0.045);
+cx.font=`bold ${s*0.04}px 'Inter',sans-serif`;
+const tr=rad*0.68,lines=wrap(CATS[i].name,s*0.05);
+for(let j=0;j<lines.length;j++)cx.fillText(lines[j],tr,(j-(lines.length-1)/2)*s*0.042);
+cx.restore()
+}
+const g2=cx.createRadialGradient(0,0,0,0,0,rad*0.18);
+g2.addColorStop(0,'#11082a');g2.addColorStop(0.5,'#0c0c1e');g2.addColorStop(1,'#080810');
+cx.beginPath();cx.arc(0,0,rad*0.18,0,2*Math.PI);
+cx.fillStyle=g2;cx.fill();
+cx.strokeStyle='rgba(255,215,0,0.15)';cx.lineWidth=2;cx.stroke();
+cx.fillStyle='#ffd700';cx.font=`bold ${s*0.06}px 'Orbitron',sans-serif`;
+cx.textAlign='center';cx.textBaseline='middle';
+cx.shadowColor='rgba(255,215,0,0.3)';cx.shadowBlur=15;
+cx.fillText('SPIN',0,-s*0.008);cx.shadowBlur=0;
+cx.fillStyle='rgba(255,255,255,0.12)';cx.font=`${s*0.025}px 'Inter',sans-serif`;
+cx.fillText('THE WHEEL',0,s*0.055);
 cx.restore();
+cx.save();cx.translate(s/2,s/2);
+for(let i=0;i<32;i++){
+const a=i/32*2*Math.PI,x=(rad-2)*Math.cos(a),y=(rad-2)*Math.sin(a);
+cx.beginPath();cx.arc(x,y,1.2,0,2*Math.PI);
+cx.fillStyle=i%2===0?'rgba(255,215,0,0.15)':'rgba(255,255,255,0.05)';cx.fill()
 }
-const g = cx.createRadialGradient(0,0,0,0,0,r*0.2);
-g.addColorStop(0,'#1a0533'); g.addColorStop(0.6,'#0d0d2b'); g.addColorStop(1,'#0a0a1a');
-cx.beginPath(); cx.arc(0,0,r*0.2,0,2*Math.PI);
-cx.fillStyle=g; cx.fill();
-cx.strokeStyle='rgba(255,215,0,0.25)'; cx.lineWidth=2; cx.stroke();
-cx.fillStyle='#ffd700'; cx.font=`bold ${s*0.065}px 'Orbitron',sans-serif`;
-cx.textAlign='center'; cx.textBaseline='middle'; cx.fillText('SPIN',0,-s*0.01);
-cx.fillStyle='rgba(255,255,255,0.2)'; cx.font=`${s*0.028}px 'Nunito',sans-serif`;
-cx.fillText('THE WHEEL',0,s*0.06);
-cx.restore();
-cx.save(); cx.translate(s/2,s/2);
-for(let i=0;i<36;i++){
-const a=i/36*2*Math.PI, x=(r-3)*Math.cos(a), y=(r-3)*Math.sin(a);
-cx.beginPath(); cx.arc(x,y,1.5,0,2*Math.PI);
-cx.fillStyle=i%2===0?'rgba(255,215,0,0.2)':'rgba(255,255,255,0.08)';
-cx.fill();
-} cx.restore();
+cx.restore()
 }
-function lighten(h,p){
-const n=parseInt(h.replace('#',''),16), a=Math.round(2.55*p);
-return `rgb(${Math.min(255,(n>>16)+a)},${Math.min(255,((n>>8)&255)+a)},${Math.min(255,(n&255)+a)})`;
+function lt(h,p){
+const n=parseInt(h.replace('#',''),16),a=Math.round(2.55*p);
+return `rgb(${Math.min(255,(n>>16)+a)},${Math.min(255,((n>>8)&255)+a)},${Math.min(255,(n&255)+a)})`
 }
-function wrapT(t,w){
-const ws=t.split(' '), ls=[]; let c='';
-for(const w of ws){ if((c+' '+w).length*7>w&&c){ ls.push(c); c=w; } else c=c?c+' '+w:w; }
-if(c)ls.push(c); return ls.length?ls:[t];
+function wrap(t,w){
+const ws=t.split(' '),ls=[];let c='';
+for(const w of ws){if((c+' '+w).length*7>w&&c){ls.push(c);c=w}else c=c?c+' '+w:w}
+if(c)ls.push(c);return ls.length?ls:[t]
 }
 
 // ===== SPIN =====
-function spin() {
-if(spinning) return;
-if(challengeActive){ closeModal(); challengeActive=false; }
-spinning=true; spinBtn.disabled=true; spinBtn.textContent='SPINNING...';
-segDisp.innerHTML='<span style="color:rgba(255,255,255,0.3);font-size:0.8rem;">🌀 Spinning...</span>';
-const ti = Math.floor(Math.random()*CAT.length);
-const sa = 2*Math.PI/CAT.length;
-const ta = -Math.PI/2-(ti+0.5)*sa;
-const fr = (5+Math.floor(Math.random()*4))*2*Math.PI;
-const total = fr+ta-(wheelRot%(2*Math.PI));
-const start = wheelRot, target = start+total;
-const dur = 4000+Math.random()*1000, t0 = performance.now();
-playSpin();
+function doSpin(){
+if(spin)return;
+if(act){closeM();act=false}
+spin=true;sb.disabled=true;sb.textContent='SPINNING...';
+sd.innerHTML='<span style="color:rgba(255,255,255,0.2);font-size:.8rem">🌀 Spinning...</span>';
+const ti=Math.floor(Math.random()*CATS.length),sa=2*Math.PI/CATS.length;
+const ta=-Math.PI/2-(ti+0.5)*sa,fr=(5+Math.floor(Math.random()*4))*2*Math.PI;
+const total=fr+ta-(rot%(2*Math.PI)),start=rot,target=start+total;
+const dur=4000+Math.random()*1000,t0=performance.now();
+sndSpin();
 function anim(t){
-const p = Math.min((t-t0)/dur,1);
-const e = 1-Math.pow(1-p,3);
-wheelRot = start+total*e; drawWheel(wheelRot);
-const passed = Math.floor((wheelRot-start)/sa);
-const prev = Math.floor(((wheelRot-sa*0.5)-start)/sa);
-if(passed>prev&&p<0.95) playTick();
-if(p<1) requestAnimationFrame(anim);
-else { wheelRot=target; drawWheel(wheelRot); done(ti); }
+const p=Math.min((t-t0)/dur,1),e=1-Math.pow(1-p,3);
+rot=start+total*e;drawWheel(rot);
+const passed=Math.floor((rot-start)/sa),prev=Math.floor(((rot-sa*0.5)-start)/sa);
+if(passed>prev&&p<.95)sndTick();
+if(p<1)requestAnimationFrame(anim);
+else{rot=target;drawWheel(rot);done(ti)}
 }
-requestAnimationFrame(anim);
+requestAnimationFrame(anim)
 }
-function done(idx){
-spinning=false; spinBtn.disabled=false; spinBtn.textContent='▶ SPIN';
-playLand();
-const c=CAT[idx];
-segDisp.innerHTML=`<span style="display:flex;align-items:center;gap:6px;"><span style="font-size:1.4rem;">${c.icon}</span><span class="seg-name">${c.name}</span></span>`;
-setTimeout(()=>showChallenge(idx),500);
+function done(i){
+spin=false;sb.disabled=false;sb.textContent='▶ SPIN';sndLand();
+const c=CATS[i];
+sd.innerHTML=`<span style="font-size:1.3rem">${c.icon}</span><span class="seg-name">${c.name}</span>`;
+setTimeout(()=>showC(i),500)
 }
 
 // ===== CHALLENGES =====
-function showChallenge(idx){
-challengeActive=true;
-const c=CAT[idx]; cardIcon.textContent=c.icon; cardSub.textContent=c.name.toUpperCase();
-switch(idx){
-case 0: showSQ(); break; case 1: showHQ(); break; case 2: showRiddle(); break;
-case 3: showMeme(); break; case 4: showRF(); break; case 5: showDP(); break;
-case 6: showTC(); break; case 7: showLB(); break; case 8: showEG(); break;
-case 9: showMX(); break;
+function showC(i){
+act=true;const c=CATS[i];ci.textContent=c.icon;cs.textContent=c.name.toUpperCase();
+switch(i){
+case 0:showSQ();break;case 1:showHQ();break;case 2:showR();break;
+case 3:showM();break;case 4:showRF();break;case 5:showDP();break;
+case 6:showTC();break;case 7:showLB();break;case 8:showEG();break;
+case 9:showMX();break
 }
-modalWrap.classList.add('open');
+mw.classList.add('open')
 }
-function closeModal(){ modalWrap.classList.remove('open'); clearTimer(); }
+function closeM(){mw.classList.remove('open');clrT()}
 
-function addAnswerBtn(container, answerText) {
-const btn = document.createElement('button');
-btn.className = 'btn-ans';
-btn.textContent = '👁 View Answer';
-btn.addEventListener('click', ()=>{
-let box = container.querySelector('.answer-box');
-if(!box){
-box = document.createElement('div'); box.className='answer-box';
-box.innerHTML=`<div class="label">Answer</div><div class="val">${answerText}</div>`;
-container.appendChild(box);
-}
-box.classList.toggle('show');
+function addAns(container,text){
+const b=document.createElement('button');b.className='btn-v';b.textContent='👁 View Answer';
+b.addEventListener('click',()=>{
+let box=container.querySelector('.ans-box');
+if(!box){box=document.createElement('div');box.className='ans-box';
+box.innerHTML=`<div class="al">Answer</div><div class="av">${text}</div>`;container.appendChild(box)}
+box.classList.toggle('open')
 });
-return btn;
+return b
 }
 
-// ===== SIMPLE QUESTION =====
+// ===== SIMPLE =====
 function showSQ(){
-const q = simpleQ[Math.floor(Math.random()*simpleQ.length)];
-cardTitle.textContent='💡 Simple Question';
-let html = `<div class="card-q">${q.q}</div><div class="opts" id="qOpts"></div>`;
-cardBody.innerHTML = html;
-const opts = document.getElementById('qOpts');
-q.o.forEach((o,i)=>{
-const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
-b.addEventListener('click',()=>handleMC(q,i,b,opts,10));
-opts.appendChild(b);
+const q=SQ[Math.floor(Math.random()*SQ.length)];
+ctit.textContent='💡 Simple Question';
+cb.innerHTML=`<div class="card-q">${q.q}</div><div class="opts" id="qO"></div>`;
+const o=document.getElementById('qO');
+q.o.forEach((t,i)=>{
+const b=document.createElement('button');b.className='opt';b.textContent=t;
+b.addEventListener('click',()=>mc(q,i,b,o));o.appendChild(b)
 });
-cardResult.innerHTML='';
-cardActs.innerHTML='';
-const ansBtn = addAnswerBtn(cardBody, q.o[q.a]);
-cardActs.appendChild(ansBtn);
-const skip = document.createElement('button'); skip.className='btn-ghost'; skip.textContent='Skip';
-skip.onclick=()=>{closeModal();challengeActive=false;advanceTurn();};
-cardActs.appendChild(skip);
-startTimer(20,()=>timeUp());
+cr.innerHTML='';ca.innerHTML='';
+const v=addAns(cb,q.o[q.a]);ca.appendChild(v);
+const sk=document.createElement('button');sk.className='btn-gh';sk.textContent='Skip';
+sk.onclick=()=>{closeM();act=false;adv()};ca.appendChild(sk);
+startT(20,()=>timeUp())
 }
-// ===== HARD QUESTION =====
+// ===== HARD =====
 function showHQ(){
-const q = hardQ[Math.floor(Math.random()*hardQ.length)];
-cardTitle.textContent='🧠 Hard Question';
-let html = `<div class="card-q">${q.q}</div><div class="opts" id="qOpts"></div>`;
-cardBody.innerHTML = html;
-const opts = document.getElementById('qOpts');
-q.o.forEach((o,i)=>{
-const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
-b.addEventListener('click',()=>handleMC(q,i,b,opts,20));
-opts.appendChild(b);
+const q=HQ[Math.floor(Math.random()*HQ.length)];
+ctit.textContent='🧠 Hard Question';
+cb.innerHTML=`<div class="card-q">${q.q}</div><div class="opts" id="qO"></div>`;
+const o=document.getElementById('qO');
+q.o.forEach((t,i)=>{
+const b=document.createElement('button');b.className='opt';b.textContent=t;
+b.addEventListener('click',()=>mc(q,i,b,o));o.appendChild(b)
 });
-cardResult.innerHTML='';
-cardActs.innerHTML='';
-const ansBtn = addAnswerBtn(cardBody, q.o[q.a]);
-cardActs.appendChild(ansBtn);
-const skip = document.createElement('button'); skip.className='btn-ghost'; skip.textContent='Skip';
-skip.onclick=()=>{closeModal();challengeActive=false;advanceTurn();};
-cardActs.appendChild(skip);
-startTimer(30,()=>timeUp());
+cr.innerHTML='';ca.innerHTML='';
+const v=addAns(cb,q.o[q.a]);ca.appendChild(v);
+const sk=document.createElement('button');sk.className='btn-gh';sk.textContent='Skip';
+sk.onclick=()=>{closeM();act=false;adv()};ca.appendChild(sk);
+startT(30,()=>timeUp())
 }
-function handleMC(q,sel,btn,container,pts){
-container.querySelectorAll('.opt-btn').forEach(b=>b.disabled=true);
+function mc(q,sel,btn,o){
+o.querySelectorAll('.opt').forEach(b=>b.disabled=true);
 if(sel===q.a){
-btn.classList.add('correct');
-const a = doubleNext?pts*2:pts;
-cardResult.innerHTML=`<div class="msg-box good">✅ Correct! +${a} points</div>`;
-awardPoints(a);
-} else {
-btn.classList.add('wrong');
-container.children[q.a].classList.add('reveal');
-cardResult.innerHTML=`<div class="msg-box bad">❌ Incorrect! Answer: ${q.o[q.a]}</div>`;
+btn.classList.add('ok');
+cr.innerHTML=`<div class="msg ok">+5 points!</div>`;
+award(5);
+}else{
+btn.classList.add('no');
+o.children[q.a].classList.add('show');
+cr.innerHTML=`<div class="msg no">Answer: ${q.o[q.a]}</div>`
 }
-clearTimer();
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
+clrT();
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
 }
 // ===== RIDDLE =====
-function showRiddle(){
-const r = riddles[Math.floor(Math.random()*riddles.length)];
-cardTitle.textContent='🔮 Riddle Challenge';
-cardBody.innerHTML=`<div class="card-q">${r.q}</div><div class="answer-box" id="riddleAns"><div class="label">Answer</div><div class="val">${r.a}</div></div>`;
-cardResult.innerHTML='';
-cardActs.innerHTML=`<button class="btn-ans" id="revRiddle">👁 View Answer</button><button class="btn-ghost" id="skipRiddle">Skip</button>`;
-document.getElementById('revRiddle').addEventListener('click',function(){
-document.getElementById('riddleAns').classList.add('show');
-const a = doubleNext?30:15;
-cardResult.innerHTML=`<div class="msg-box good">🎉 +${a} points</div>`;
-awardPoints(a); clearTimer(); this.disabled=true;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
+function showR(){
+const r=RIDDLES[Math.floor(Math.random()*RIDDLES.length)];
+ctit.textContent='🔮 Riddle Challenge';
+cb.innerHTML=`<div class="card-q">${r.q}</div><div class="ans-box" id="rA"><div class="al">Answer</div><div class="av">${r.a}</div></div>`;
+cr.innerHTML='';
+ca.innerHTML=`<button class="btn-v" id="revR">👁 View Answer</button><button class="btn-gh" id="skipR">Skip</button>`;
+document.getElementById('revR').addEventListener('click',function(){
+document.getElementById('rA').classList.add('open');
+cr.innerHTML=`<div class="msg ok">+5 points!</div>`;
+award(5);clrT();this.disabled=true;
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
 });
-document.getElementById('skipRiddle').onclick=()=>{closeModal();challengeActive=false;advanceTurn();};
-startTimer(30,()=>{
-document.getElementById('revRiddle').disabled=true;
-document.getElementById('riddleAns').classList.add('show');
-cardResult.innerHTML=`<div class="msg-box bad">⏰ Time's up! Answer: ${r.a}</div>`;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-});
+document.getElementById('skipR').onclick=()=>{closeM();act=false;adv()};
+startT(30,()=>{
+document.getElementById('revR').disabled=true;document.getElementById('rA').classList.add('open');
+cr.innerHTML=`<div class="msg no">Time's up! Answer: ${r.a}</div>`;
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
+})
 }
 // ===== MEME =====
-function showMeme(){
-const m = memes[Math.floor(Math.random()*memes.length)];
-cardTitle.textContent='😂 Meme Challenge';
-cardBody.innerHTML=`<div class="card-q">${m.q}</div><div class="opts" id="qOpts"></div>`;
-const opts = document.getElementById('qOpts');
-m.o.forEach((o,i)=>{
-const b=document.createElement('button'); b.className='opt-btn'; b.textContent=o;
-b.addEventListener('click',()=>handleMC(m,i,b,opts,10));
-opts.appendChild(b);
+function showM(){
+const m=MEMES[Math.floor(Math.random()*MEMES.length)];
+ctit.textContent='😂 Meme Challenge';
+cb.innerHTML=`<div class="card-q">${m.q}</div><div class="opts" id="qO"></div>`;
+const o=document.getElementById('qO');
+m.o.forEach((t,i)=>{
+const b=document.createElement('button');b.className='opt';b.textContent=t;
+b.addEventListener('click',()=>mc(m,i,b,o));o.appendChild(b)
 });
-cardResult.innerHTML=''; cardActs.innerHTML='';
-const ansBtn = addAnswerBtn(cardBody, m.o[m.a]);
-cardActs.appendChild(ansBtn);
-const skip = document.createElement('button'); skip.className='btn-ghost'; skip.textContent='Skip';
-skip.onclick=()=>{closeModal();challengeActive=false;advanceTurn();};
-cardActs.appendChild(skip);
-startTimer(15,()=>timeUp());
+cr.innerHTML='';ca.innerHTML='';
+const v=addAns(cb,m.o[m.a]);ca.appendChild(v);
+const sk=document.createElement('button');sk.className='btn-gh';sk.textContent='Skip';
+sk.onclick=()=>{closeM();act=false;adv()};ca.appendChild(sk);
+startT(15,()=>timeUp())
 }
 // ===== RAPID FIRE =====
 function showRF(){
-const s = rfSets[Math.floor(Math.random()*rfSets.length)];
-cardTitle.textContent='🔥 Rapid Fire';
-const data = [{q:s.q1,o:s.o1,a:s.a1},{q:s.q2,o:s.o2,a:s.a2},{q:s.q3,o:s.o3,a:s.a3}];
-let html = '<div style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-bottom:8px;">Answer 3 quick!</div><div id="rfBox"></div>';
-cardBody.innerHTML = html;
-cardResult.innerHTML=''; cardActs.innerHTML=`<button class="btn-ghost" onclick="closeModal();challengeActive=false;advanceTurn();">Skip</button>`;
-const rfBox = document.getElementById('rfBox');
-let correct = 0, answered = 0, done = [false,false,false];
-const answerTexts = data.map(d=>d.o[d.a]);
+const s=RFS[Math.floor(Math.random()*RFS.length)];
+ctit.textContent='🔥 Rapid Fire';
+const data=[{q:s.q1,o:s.o1,a:s.a1},{q:s.q2,o:s.o2,a:s.a2},{q:s.q3,o:s.o3,a:s.a3}];
+cb.innerHTML='<div style="color:rgba(255,255,255,0.3);font-size:.78rem;margin-bottom:8px">Answer all 3!</div><div id="rfB"></div>';
+cr.innerHTML='';ca.innerHTML=`<button class="btn-gh" onclick="closeM();act=false;adv()">Skip</button>`;
+const rB=document.getElementById('rfB');let cor=0,ans=0,done=[false,false,false];
+const ats=data.map(d=>d.o[d.a]);
 data.forEach((item,idx)=>{
-const div = document.createElement('div'); div.className='rf-q';
-div.innerHTML=`<div class="rf-q-label">Q${idx+1}: ${item.q}</div><div class="rf-opts" id="rfO${idx}"></div>`;
-rfBox.appendChild(div);
-const opts = document.getElementById(`rfO${idx}`);
-item.o.forEach((o,oi)=>{
-const b = document.createElement('button'); b.textContent=o;
+const d=document.createElement('div');d.className='rf-q';
+d.innerHTML=`<div class="rf-l">Q${idx+1}: ${item.q}</div><div class="rf-o" id="rfO${idx}"></div>`;
+rB.appendChild(d);const o=document.getElementById(`rfO${idx}`);
+item.o.forEach((t,oi)=>{
+const b=document.createElement('button');b.textContent=t;
 b.addEventListener('click',()=>{
-if(done[idx]) return; done[idx]=true; answered++;
-if(oi===item.a){ b.classList.add('correct'); correct++; }
-else { b.classList.add('wrong'); opts.children[item.a].classList.add('correct'); }
-opts.querySelectorAll('button').forEach(bb=>bb.disabled=true);
-if(answered===3){
-clearTimer();
-const pts = correct*5, a = doubleNext?pts*2:pts;
-cardResult.innerHTML=`<div class="msg-box good">${correct}/3 correct! +${a} points</div>`;
-awardPoints(a);
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-} else if(answered>0){
-cardResult.innerHTML=`<div class="msg-box info">${correct}/${answered} so far...</div>`;
-}
+if(done[idx])return;done[idx]=true;ans++;
+if(oi===item.a){b.classList.add('ok');cor++}
+else{b.classList.add('no');o.children[item.a].classList.add('ok')}
+o.querySelectorAll('button').forEach(bb=>bb.disabled=true);
+if(ans===3){clrT();cr.innerHTML=`<div class="msg ok">${cor}/3 correct! +${cor*5} points</div>`;if(cor)award(cor*5);ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`}
+else if(ans>0)cr.innerHTML=`<div class="msg info">${cor}/${ans} so far...</div>`
+});o.appendChild(b)
+})
 });
-opts.appendChild(b);
+const v=document.createElement('button');v.className='btn-v';
+v.textContent='👁 View Answers';
+v.addEventListener('click',()=>{
+let box=cb.querySelector('.ans-box');
+if(!box){box=document.createElement('div');box.className='ans-box';
+box.innerHTML=`<div class="al">Answers</div><div class="av">1. ${ats[0]} | 2. ${ats[1]} | 3. ${ats[2]}</div>`;cb.appendChild(box)}
+box.classList.toggle('open')
 });
-});
-const ansBtn = document.createElement('button'); ansBtn.className='btn-ans';
-ansBtn.textContent='👁 View Answers';
-ansBtn.addEventListener('click',()=>{
-let box = cardBody.querySelector('.answer-box');
-if(!box){
-box = document.createElement('div'); box.className='answer-box';
-box.innerHTML = `<div class="label">Answers</div><div class="val">1. ${answerTexts[0]} | 2. ${answerTexts[1]} | 3. ${answerTexts[2]}</div>`;
-cardBody.appendChild(box);
-}
-box.classList.toggle('show');
-});
-cardActs.prepend(ansBtn);
-startTimer(20,()=>{
-const pts = correct*5, a = doubleNext?pts*2:pts;
-cardResult.innerHTML=`<div class="msg-box bad">⏰ Time! ${correct}/3 correct +${a} points</div>`;
-awardPoints(a);
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-});
+ca.prepend(v);
+startT(20,()=>{
+cr.innerHTML=`<div class="msg no">Time! ${cor}/3 correct +${cor*5} points</div>`;if(cor)award(cor*5);
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
+})
 }
 // ===== DOUBLE POINTS =====
 function showDP(){
-cardTitle.textContent='✌️ Double Points';
-cardBody.innerHTML=`<div class="bonus-box"><div class="bonus-icon">✌️</div><div class="bonus-text" style="color:#ffd700;font-weight:700;">Your NEXT challenge scores DOUBLE!</div></div>`;
-cardResult.innerHTML='';
-cardActs.innerHTML=`<button class="btn-gold" onclick="activateDP()">Activate Double Points!</button><button class="btn-ghost" onclick="closeModal();challengeActive=false;advanceTurn();">Skip</button>`;
+ctit.textContent='✌️ Double Points';
+cb.innerHTML=`<div class="bonus"><span class="bi">✌️</span><span class="bt" style="color:#ffd700;font-weight:700">Your NEXT challenge scores DOUBLE!</span></div>`;
+cr.innerHTML='';
+ca.innerHTML=`<button class="btn-g" onclick="dbl=true;closeM();act=false;doSpin()">Activate!</button><button class="btn-gh" onclick="closeM();act=false;adv()">Skip</button>`
 }
-window.activateDP = function(){
-doubleNext=true; closeModal(); challengeActive=false; spin();
-};
-// ===== TEAM CHALLENGE =====
+// ===== TEAM =====
 function showTC(){
-const t = teamQs[Math.floor(Math.random()*teamQs.length)];
-const team = teams[curTeam];
-cardTitle.textContent=`🤝 ${team.emoji} ${team.name} Challenge`;
-cardBody.innerHTML=`<div class="card-q">${t.q}</div><div style="padding:10px;border-radius:10px;background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.08);margin:6px 0;"><span style="color:#00ff88;font-weight:600;">Work together as a team!</span></div>`;
-cardResult.innerHTML='';
-cardActs.innerHTML=`<button class="btn-cy" id="tcDone">Completed!</button><button class="btn-ghost" onclick="closeModal();challengeActive=false;advanceTurn();">Skip</button>`;
-document.getElementById('tcDone').addEventListener('click',function(){
-const a = doubleNext?50:25;
-cardResult.innerHTML=`<div class="msg-box good">Teamwork! +${a} points</div>`;
-awardPoints(a); clearTimer(); this.disabled=true;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
+const t=TEAM_Q[Math.floor(Math.random()*TEAM_Q.length)],team=teams[cur];
+ctit.textContent=`🤝 ${team.emo} ${team.name}`;
+cb.innerHTML=`<div class="card-q">${t.q}</div><div style="padding:10px;border-radius:10px;background:rgba(0,255,135,0.04);border:1px solid rgba(0,255,135,0.06);margin:6px 0"><span style="color:#00ff87;font-weight:600">Work together!</span></div>`;
+cr.innerHTML='';
+ca.innerHTML=`<button class="btn-p" id="tcD">Done!</button><button class="btn-gh" onclick="closeM();act=false;adv()">Skip</button>`;
+document.getElementById('tcD').addEventListener('click',function(){
+cr.innerHTML=`<div class="msg ok">+5 points!</div>`;award(5);clrT();this.disabled=true;
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
 });
-startTimer(45,()=>{
-document.getElementById('tcDone').disabled=true;
-cardResult.innerHTML=`<div class="msg-box bad">Time's up!</div>`;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-});
+startT(45,()=>{document.getElementById('tcD').disabled=true;cr.innerHTML=`<div class="msg no">Time's up!</div>`;ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`})
 }
-// ===== LUCKY BONUS =====
+// ===== LUCKY =====
 function showLB(){
-const l = luckyB[Math.floor(Math.random()*luckyB.length)];
-cardTitle.textContent='Lucky Bonus!';
-cardBody.innerHTML=`<div class="bonus-box"><div class="bonus-icon">🍀</div><div class="bonus-text">${l.text}</div></div>`;
-cardResult.innerHTML='';
-cardActs.innerHTML=`<button class="btn-gold" onclick="claimLucky(${l.pts})">Claim +${l.pts}!</button>`;
+const l=LUCK[Math.floor(Math.random()*LUCK.length)];
+ctit.textContent='🍀 Lucky Bonus!';
+cb.innerHTML=`<div class="bonus"><span class="bi">🍀</span><span class="bt">${l.text}</span></div>`;
+cr.innerHTML='';
+ca.innerHTML=`<button class="btn-g" onclick="clLucky(${l.pts})">Claim!</button>`
 }
-window.claimLucky = function(pts){
-awardPoints(pts);
-cardResult.innerHTML=`<div class="msg-box good">+${pts} bonus points!</div>`;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-};
-// ===== EMOJI GUESS =====
+window.clLucky=function(p){award(p);cr.innerHTML=`<div class="msg ok">+${p} points!</div>`;ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`};
+// ===== EMOJI =====
 function showEG(){
-const e = emojis[Math.floor(Math.random()*emojis.length)];
-cardTitle.textContent='Emoji Guess';
-cardBody.innerHTML=`<div class="emoji-big">${e.em}</div><div class="hint">💡 ${e.hint}</div><input type="text" class="emoji-inp" id="emojiInp" placeholder="Type your answer..." autocomplete="off"><div class="answer-box" id="egAns"><div class="label">Answer</div><div class="val">${e.a}</div></div>`;
-cardResult.innerHTML='';
-cardActs.innerHTML=`<button class="btn-cy" id="egSub">Submit</button><button class="btn-ans" id="egRev">👁 View Answer</button><button class="btn-ghost" id="egSkip">Skip</button>`;
-document.getElementById('egSub').addEventListener('click',function(){
-const inp = document.getElementById('emojiInp');
+const e=EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+ctit.textContent='🎬 Emoji Guess';
+cb.innerHTML=`<div class="emoji-big">${e.em}</div><div class="hint">💡 ${e.hint}</div><input type="text" class="emoji-inp" id="eInp" placeholder="Type your answer..." autocomplete="off"><div class="ans-box" id="egA"><div class="al">Answer</div><div class="av">${e.a}</div></div>`;
+cr.innerHTML='';
+ca.innerHTML=`<button class="btn-p" id="eSub">Submit</button><button class="btn-v" id="eRev">👁 View Answer</button><button class="btn-gh" id="eSkip">Skip</button>`;
+document.getElementById('eSub').addEventListener('click',function(){
+const inp=document.getElementById('eInp');
 if(inp.value.trim().toLowerCase()===e.a.toLowerCase()){
-const a = doubleNext?30:15; cardResult.innerHTML=`<div class="msg-box good">Correct! +${a} points</div>`;
-awardPoints(a); clearTimer(); this.disabled=true;
-document.getElementById('egAns').classList.add('show');
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-} else {
-inp.style.borderColor='#ff2d78'; cardResult.innerHTML=`<div class="msg-box bad">Not quite! Try again or view answer.</div>`;
-setTimeout(()=>inp.style.borderColor='rgba(255,255,255,0.08)',1500);
+cr.innerHTML=`<div class="msg ok">+5 points!</div>`;award(5);clrT();this.disabled=true;
+document.getElementById('egA').classList.add('open');
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
+}else{
+inp.style.borderColor='#ff0055';cr.innerHTML=`<div class="msg no">Try again!</div>`;
+setTimeout(()=>inp.style.borderColor='rgba(255,255,255,0.06)',1200)
 }
 });
-document.getElementById('egRev').addEventListener('click',function(){
-document.getElementById('egAns').classList.toggle('show');
-});
-document.getElementById('egSkip').onclick=()=>{closeModal();challengeActive=false;advanceTurn();};
-startTimer(25,()=>{
-document.getElementById('egSub').disabled=true; document.getElementById('egAns').classList.add('show');
-cardResult.innerHTML=`<div class="msg-box bad">Time's up! Answer: ${e.a}</div>`;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-});
+document.getElementById('eRev').addEventListener('click',function(){document.getElementById('egA').classList.toggle('open')});
+document.getElementById('eSkip').onclick=()=>{closeM();act=false;adv()};
+startT(25,()=>{document.getElementById('eSub').disabled=true;document.getElementById('egA').classList.add('open');cr.innerHTML=`<div class="msg no">Answer: ${e.a}</div>`;ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`})
 }
-// ===== MYSTERY BOX =====
+// ===== MYSTERY =====
 function showMX(){
-const m = mxBox[Math.floor(Math.random()*mxBox.length)];
-cardTitle.textContent='Mystery Box!';
-cardBody.innerHTML=`<div class="bonus-box"><div class="bonus-icon" style="animation:bounceM 0.5s ease infinite alternate;">🎁</div><div class="bonus-text">Click to reveal!</div></div>
-<style>@keyframes bounceM{from{transform:translateY(0)}to{transform:translateY(-8px)}}</style>`;
-cardResult.innerHTML='';
-cardActs.innerHTML=`<button class="btn-gold" id="openMx">Open Mystery Box!</button>`;
+const m=MX[Math.floor(Math.random()*MX.length)];
+ctit.textContent='🎁 Mystery Box!';
+cb.innerHTML=`<div class="bonus"><span class="bi" style="animation:bounceB .5s ease infinite alternate">🎁</span><span class="bt">Click to reveal!</span></div><style>@keyframes bounceB{from{transform:translateY(0)}to{transform:translateY(-8px)}}</style>`;
+cr.innerHTML='';
+ca.innerHTML=`<button class="btn-g" id="openMx">Open!</button>`;
 document.getElementById('openMx').addEventListener('click',function(){
-this.disabled=true; this.textContent='Opening...';
-if(m.sp==='double'){ cardResult.innerHTML=`<div class="msg-box info">Double Next Score!</div>`; doubleNext=true; }
-else if(m.sp==='extra'){ cardResult.innerHTML=`<div class="msg-box info">Extra Turn!</div>`; extraTurn=true; }
-else { awardPoints(m.pts); cardResult.innerHTML=`<div class="msg-box good">${m.text}</div>`; }
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-});
+this.disabled=true;this.textContent='Opening...';
+if(m.sp==='dbl'){cr.innerHTML=`<div class="msg info">Double Next Score!</div>`;dbl=true}
+else if(m.sp==='ext'){cr.innerHTML=`<div class="msg info">Extra Turn!</div>`;ext=true}
+else{award(m.pts);cr.innerHTML=`<div class="msg ok">${m.text}</div>`}
+ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`
+})
 }
 
-// ===== POINTS & TEAMS =====
-function awardPoints(pts){
-teams[curTeam].score += pts;
-playWin(); triggerConfetti(); renderTeams(); popPts(`+${pts}`);
+// ===== POINTS =====
+function award(p){
+teams[cur].score+=p;renderT();sndWin();confetti();ptsPop(`+${p}`)
 }
-function popPts(t){
-const el = document.createElement('div'); el.className='pts-popup'; el.textContent=t;
-document.body.appendChild(el); setTimeout(()=>el.remove(),1500);
+function ptsPop(t){
+const e=document.createElement('div');e.className='pts-pop';e.textContent=t;
+document.body.appendChild(e);setTimeout(()=>e.remove(),1400)
 }
-function renderTeams(){
-teamList.innerHTML='';
+function renderT(){
+tl.innerHTML='';
 teams.forEach((t,i)=>{
-const row = document.createElement('div');
-row.className = 'team-row'+(i===curTeam?' active':'')+(isLdr(i)?' leader-row':'');
-const em = document.createElement('span'); em.className='team-emoji'; em.textContent=t.emoji;
-const inp = document.createElement('input'); inp.className='team-name-input'; inp.value=t.name;
-inp.placeholder='Team name'; inp.maxLength=16;
-inp.addEventListener('input',()=>{ t.name=inp.value||'?'; updateTurn(); });
-const sg = document.createElement('div'); sg.className='score-group';
-const sc = document.createElement('input'); sc.type='number'; sc.className='team-score'; sc.value=t.score;
-sc.addEventListener('input',()=>{ t.score=parseInt(sc.value)||0; renderTeams(); });
-const m5 = mkSB('-5','minus big',()=>{ t.score=Math.max(0,t.score-5); renderTeams(); });
-const m1 = mkSB('-1','minus',()=>{ t.score=Math.max(0,t.score-1); renderTeams(); });
-const p1 = mkSB('+1','plus',()=>{ t.score+=1; renderTeams(); });
-const p5 = mkSB('+5','plus big',()=>{ t.score+=5; renderTeams(); });
-sg.append(m5,m1,sc,p1,p5);
-row.append(em,inp,sg);
-teamList.appendChild(row);
+const r=document.createElement('div');
+r.className='team-row'+(i===cur?' active':'')+(isLdr(i)?' leader':'');
+const em=document.createElement('span');em.className='team-emoji';em.textContent=t.emo;
+const inp=document.createElement('input');inp.className='team-inp';inp.value=t.name;
+inp.placeholder='Name';inp.maxLength=16;
+inp.addEventListener('input',()=>{t.name=inp.value||'?';updTurn()});
+const sa=document.createElement('div');sa.className='score-area';
+const sc=document.createElement('input');sc.type='number';sc.className='score-num';sc.value=t.score;
+sc.addEventListener('input',()=>{t.score=parseInt(sc.value)||0;renderT()});
+const m5=btn('-5','m b',()=>{t.score=Math.max(0,t.score-5);renderT()});
+const m1=btn('-1','m',()=>{t.score=Math.max(0,t.score-1);renderT()});
+const p1=btn('+1','p',()=>{t.score+=1;renderT()});
+const p5=btn('+5','p b',()=>{t.score+=5;renderT()});
+sa.append(m5,m1,sc,p1,p5);
+r.append(em,inp,sa);tl.appendChild(r)
 });
-const mx = Math.max(...teams.map(t=>t.score));
-document.querySelectorAll('.team-row').forEach((r,i)=>{
-if(mx>0 && teams[i].score===mx) r.classList.add('leader-row');
-});
-updateTurn();
+const mx=Math.max(...teams.map(t=>t.score));
+document.querySelectorAll('.team-row').forEach((r,i)=>{if(mx>0&&teams[i].score===mx)r.classList.add('leader')});
+updTurn()
 }
-function mkSB(txt,cls,fn){
-const b=document.createElement('button'); b.className=`score-btn ${cls}`; b.textContent=txt;
-b.addEventListener('click',fn); return b;
+function btn(t,c,f){
+const b=document.createElement('button');b.className=`sc-btn ${c}`;b.textContent=t;
+b.addEventListener('click',f);return b
 }
-function isLdr(i){
-const mx = Math.max(...teams.map(t=>t.score));
-return mx>0 && teams[i].score===mx;
-}
-function updateTurn(){
-curTeamName.textContent = `${teams[curTeam].emoji} ${teams[curTeam].name}`;
-}
-function advanceTurn(){
-if(extraTurn){ extraTurn=false; return; }
-doubleNext=false;
-curTeam = (curTeam+1) % teams.length;
-updateTurn();
-segDisp.innerHTML=`<span style="color:rgba(255,255,255,0.3);font-size:0.8rem;">🎯 ${teams[curTeam].emoji} ${teams[curTeam].name}'s turn!</span>`;
+function isLdr(i){const mx=Math.max(...teams.map(t=>t.score));return mx>0&&teams[i].score===mx}
+function updTurn(){ct.textContent=`${teams[cur].emo} ${teams[cur].name}`}
+function adv(){
+if(ext){ext=false;return}
+dbl=false;cur=(cur+1)%teams.length;updTurn();
+sd.innerHTML=`<span style="color:rgba(255,255,255,0.2);font-size:.8rem">🎯 ${teams[cur].emo} ${teams[cur].name}'s turn!</span>`
 }
 
 // ===== TIMER =====
-let tmr = null;
-function startTimer(sec,onEnd){
-clearTimer(); let r=sec;
-timerNum.textContent=r; timerNum.className='timer-num';
-timerFill.style.width='100%'; timerFill.className='track-fill';
-tmr=setInterval(()=>{ r--; timerNum.textContent=r;
-timerFill.style.width=(r/sec)*100+'%';
-if(r<=5){ timerNum.classList.add('track-warn'); timerFill.classList.add('track-fill-danger'); }
-else if(r<=10){ timerFill.classList.add('track-fill-warn'); }
-if(r<=0){ clearTimer(); onEnd(); }
-},1000);
+let tmr=null;
+function startT(sec,onEnd){
+clrT();let r=sec;
+tn.textContent=r;tn.className='timer-num';
+tf.style.width='100%';tf.className='track-fill';
+tmr=setInterval(()=>{
+r--;tn.textContent=r;tf.style.width=(r/sec)*100+'%';
+if(r<=5){tn.classList.add('warn');tf.classList.add('red')}
+else if(r<=10){tf.classList.add('amber')}
+if(r<=0){clrT();onEnd()}
+},1000)
 }
-function clearTimer(){
-if(tmr){ clearInterval(tmr); tmr=null; }
-timerNum.textContent='--'; timerNum.className='timer-num';
-timerFill.style.width='100%'; timerFill.className='track-fill';
+function clrT(){
+if(tmr){clearInterval(tmr);tmr=null}
+tn.textContent='--';tn.className='timer-num';
+tf.style.width='100%';tf.className='track-fill'
 }
-function timeUp(){
-cardResult.innerHTML=`<div class="msg-box bad">Time's up!</div>`;
-cardActs.innerHTML=`<button class="btn-gold" onclick="closeModal();challengeActive=false;advanceTurn();">Continue</button>`;
-}
+function timeUp(){cr.innerHTML=`<div class="msg no">Time's up!</div>`;ca.innerHTML=`<button class="btn-g" onclick="closeM();act=false;adv()">Continue</button>`}
 
 // ===== SOUNDS =====
-let actx = null;
-function ax(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); if(actx.state==='suspended') actx.resume(); return actx; }
-function playSpin(){ try{
-const c=ax(), o=c.createOscillator(), g=c.createGain(); o.connect(g); g.connect(c.destination);
-o.type='sawtooth'; o.frequency.setValueAtTime(300,c.currentTime);
-o.frequency.exponentialRampToValueAtTime(1200,c.currentTime+0.3);
-o.frequency.exponentialRampToValueAtTime(400,c.currentTime+0.6);
-g.gain.setValueAtTime(0.06,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.6);
-o.start(c.currentTime); o.stop(c.currentTime+0.6);
-}catch(e){} }
-function playTick(){ try{
-const c=ax(), o=c.createOscillator(), g=c.createGain(); o.connect(g); g.connect(c.destination);
-o.type='sine'; o.frequency.setValueAtTime(2000,c.currentTime);
-g.gain.setValueAtTime(0.03,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.04);
-o.start(c.currentTime); o.stop(c.currentTime+0.04);
-}catch(e){} }
-function playWin(){ try{
-const c=ax(); [523.25,659.25,783.99,1046.5].forEach((f,i)=>{
-const o=c.createOscillator(), g=c.createGain(); o.connect(g); g.connect(c.destination);
-o.type='sine'; o.frequency.setValueAtTime(f,c.currentTime+i*0.12);
-g.gain.setValueAtTime(0,c.currentTime+i*0.12);
-g.gain.linearRampToValueAtTime(0.1,c.currentTime+i*0.12+0.04);
-g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+i*0.12+0.2);
-o.start(c.currentTime+i*0.12); o.stop(c.currentTime+i*0.12+0.2);
-});
-}catch(e){} }
-function playLand(){ try{
+let actx=null;
+function ax(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx}
+function sndSpin(){try{
+const c=ax(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);
+o.type='sawtooth';o.frequency.setValueAtTime(300,c.currentTime);
+o.frequency.exponentialRampToValueAtTime(1200,c.currentTime+.3);
+o.frequency.exponentialRampToValueAtTime(400,c.currentTime+.6);
+g.gain.setValueAtTime(.05,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.6);
+o.start(c.currentTime);o.stop(c.currentTime+.6)
+}catch(e){}}
+function sndTick(){try{
+const c=ax(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);
+o.type='sine';o.frequency.setValueAtTime(2000,c.currentTime);
+g.gain.setValueAtTime(.025,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.04);
+o.start(c.currentTime);o.stop(c.currentTime+.04)
+}catch(e){}}
+function sndWin(){try{
+const c=ax();[523.25,659.25,783.99,1046.5].forEach((f,i)=>{
+const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);
+o.type='sine';o.frequency.setValueAtTime(f,c.currentTime+i*.12);
+g.gain.setValueAtTime(0,c.currentTime+i*.12);
+g.gain.linearRampToValueAtTime(.09,c.currentTime+i*.12+.04);
+g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.12+.18);
+o.start(c.currentTime+i*.12);o.stop(c.currentTime+i*.12+.18)
+})
+}catch(e){}}
+function sndLand(){try{
 const c=ax();
-const o=c.createOscillator(),g=c.createGain(); o.connect(g); g.connect(c.destination);
-o.type='triangle'; o.frequency.setValueAtTime(440,c.currentTime);
-o.frequency.exponentialRampToValueAtTime(880,c.currentTime+0.12);
-g.gain.setValueAtTime(0.12,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);
-o.start(c.currentTime); o.stop(c.currentTime+0.25);
-const o2=c.createOscillator(),g2=c.createGain(); o2.connect(g2); g2.connect(c.destination);
-o2.type='sine'; o2.frequency.setValueAtTime(100,c.currentTime+0.08);
-g2.gain.setValueAtTime(0.18,c.currentTime+0.08); g2.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.25);
-o2.start(c.currentTime+0.08); o2.stop(c.currentTime+0.25);
-}catch(e){} }
+const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);
+o.type='triangle';o.frequency.setValueAtTime(440,c.currentTime);
+o.frequency.exponentialRampToValueAtTime(880,c.currentTime+.12);
+g.gain.setValueAtTime(.1,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.25);
+o.start(c.currentTime);o.stop(c.currentTime+.25);
+const o2=c.createOscillator(),g2=c.createGain();o2.connect(g2);g2.connect(c.destination);
+o2.type='sine';o2.frequency.setValueAtTime(100,c.currentTime+.08);
+g2.gain.setValueAtTime(.15,c.currentTime+.08);g2.gain.exponentialRampToValueAtTime(.001,c.currentTime+.25);
+o2.start(c.currentTime+.08);o2.stop(c.currentTime+.25)
+}catch(e){}}
 
 // ===== CONFETTI =====
-let cpieces = [], caid = null;
-function triggerConfetti(n=100){
-setupConfetti();
-for(let i=0;i<n;i++) cpieces.push({
-x:Math.random()*confettiCv.width, y:Math.random()*confettiCv.height*-1-10,
-w:4+Math.random()*6, h:3+Math.random()*4,
-vx:(Math.random()-0.5)*3, vy:1.5+Math.random()*4,
-color:['#ff2d78','#7c3aed','#00d4ff','#ffd700','#ff8800','#00ff88','#38bdf8','#a78bfa','#f472b6'][Math.floor(Math.random()*9)],
-rot:Math.random()*360, rs:(Math.random()-0.5)*12, op:1, g:0.06+Math.random()*0.04
+let pieces=[],aid=null;
+function confetti(n=100){
+setupCc();
+for(let i=0;i<n;i++)pieces.push({
+x:Math.random()*ccv.width,y:Math.random()*ccv.height*-1-10,
+w:3+Math.random()*7,h:3+Math.random()*4,
+vx:(Math.random()-.5)*4,vy:1.5+Math.random()*4,
+color:['#ff0055','#8b5cf6','#00f3ff','#ffd700','#ff6a00','#00ff87','#06b6d4','#7c3aed','#f472b6'][Math.floor(Math.random()*9)],
+rot:Math.random()*360,rs:(Math.random()-.5)*14,op:1,g:.05+Math.random()*.04
 });
-if(!caid) animC();
+if(!aid)animC()
 }
 function animC(){
-cCtx.clearRect(0,0,confettiCv.width,confettiCv.height);
-let alive=false;
-for(const p of cpieces){
-p.x+=p.vx; p.vy+=p.g; p.y+=p.vy; p.rot+=p.rs; p.op-=0.004;
-if(p.op>0&&p.y<confettiCv.height+20){
-alive=true; cCtx.save(); cCtx.translate(p.x,p.y);
-cCtx.rotate(p.rot*Math.PI/180); cCtx.globalAlpha=Math.max(0,p.op);
-cCtx.fillStyle=p.color; cCtx.fillRect(-p.w/2,-p.h/2,p.w,p.h); cCtx.restore();
+cctx.clearRect(0,0,ccv.width,ccv.height);let alive=false;
+for(const p of pieces){
+p.x+=p.vx;p.vy+=p.g;p.y+=p.vy;p.rot+=p.rs;p.op-=.0035;
+if(p.op>0&&p.y<ccv.height+20){
+alive=true;cctx.save();cctx.translate(p.x,p.y);
+cctx.rotate(p.rot*Math.PI/180);cctx.globalAlpha=Math.max(0,p.op);
+cctx.fillStyle=p.color;cctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cctx.restore()
 }
 }
-cpieces=cpieces.filter(p=>p.op>0&&p.y<confettiCv.height+20);
-if(alive||cpieces.length) caid=requestAnimationFrame(animC);
-else{ caid=null; cCtx.clearRect(0,0,confettiCv.width,confettiCv.height); }
+pieces=pieces.filter(p=>p.op>0&&p.y<ccv.height+20);
+if(alive||pieces.length)aid=requestAnimationFrame(animC);
+else{aid=null;cctx.clearRect(0,0,ccv.width,ccv.height)}
 }
 
 // ===== EVENTS =====
-window.addEventListener('resize',()=>{ setupCanvas(); setupConfetti(); });
+window.addEventListener('resize',()=>{setupCv();setupCc()});
 document.addEventListener('click',()=>ax(),{once:true});
-spinBtn.addEventListener('click',spin);
-cv.addEventListener('click',()=>{ if(!spinning&&!challengeActive) spin(); });
-modalWrap.addEventListener('click',function(e){
-if(e.target===this && !spinning && challengeActive){
-const noClose = ['double points','rapid fire'].some(k=>cardSub.textContent.toLowerCase().includes(k));
-if(!noClose){ closeModal(); challengeActive=false; advanceTurn(); }
+sb.addEventListener('click',doSpin);
+cv.addEventListener('click',()=>{if(!spin&&!act)doSpin()});
+mw.addEventListener('click',function(e){
+if(e.target===this&&!spin&&act){
+if(cs.textContent.toLowerCase().includes('double')||cs.textContent.toLowerCase().includes('rapid'))return;
+closeM();act=false;adv()
 }
 });
 
 // ===== INIT =====
-function init(){
-setupCanvas(); setupConfetti(); renderTeams();
-timerNum.textContent='--';
-segDisp.innerHTML=`<span style="color:rgba(255,255,255,0.3);font-size:0.8rem;">${teams[0].emoji} ${teams[0].name}'s turn!</span>`;
-}
+function init(){setupCv();setupCc();renderT();tn.textContent='--';
+sd.innerHTML=`<span style="color:rgba(255,255,255,0.2);font-size:.8rem">🎯 ${teams[0].emo} ${teams[0].name}'s turn!</span>`}
 document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
